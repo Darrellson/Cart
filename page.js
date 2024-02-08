@@ -1,20 +1,21 @@
-let openShopping = document.querySelector('.shopping');
-let closeShopping = document.querySelector('.closeShopping');
-let list = document.querySelector('.list');
-let listCard = document.querySelector('.listCard');
-let body = document.querySelector('body');
-let total = document.querySelector('.total');
-let quantity = document.querySelector('.quantity');
+const openShopping = document.querySelector('.shopping');
+const closeShopping = document.querySelector('.closeShopping');
+const list = document.querySelector('.list');
+const listCard = document.querySelector('.listCard');
+const body = document.querySelector('body');
+const total = document.querySelector('.total');
+const quantity = document.querySelector('.quantity');
 
 
-openShopping.addEventListener('click', ()=>{ // These lines add event listeners to the elements selected above. When the element with class 'shopping' is clicked, the 'active' class is added to the body, and when the element with class 'closeShopping' is clicked, the 'active' class is removed from the body.
-    body.classList.add('active');
+openShopping.addEventListener('click', ()=>{ 
+    body.classList.toggle('active');
 })
+
 closeShopping.addEventListener('click', ()=>{
     body.classList.remove('active');
 })
 
-let products = [                     //Here, an array products is declared, containing objects representing different products. listCards is initialized with the data retrieved from the 'cart' key in the localStorage, or an empty array if there is no data.
+const products = [                
     {
         id: 1,                           
         name: 'PRODUCT NAME 1',
@@ -52,14 +53,12 @@ let products = [                     //Here, an array products is declared, cont
         price: 33
     }
 ];
-let listCards = JSON.parse(localStorage.getItem('cart')) || [];  // localStorage.getItem('cart'): Retrieves the value stored in the 'cart' key of the browser's local storage.
 
-//JSON.parse(...): Converts the retrieved value from a JSON-formatted string to a JavaScript object. Local storage stores data as strings, so this step is necessary to convert it back into a usable object.
+const listCards = JSON.parse(localStorage.getItem('cart')) || [];  
 
-//|| []: The || (logical OR) operator is used here for fallback. If the value retrieved from local storage is null (indicating that there is no data stored in the 'cart' key), the right side of the || operator is used as a default value. In this case, an empty array [] is assigned to listCards.
-function initApp() {
+const initApp = () => {
     products.forEach((value, key) => {
-        let newDiv = document.createElement('div');
+        const newDiv = document.createElement('div');
         newDiv.classList.add('item');
         newDiv.innerHTML = `
             <img src="image/${value.image}">
@@ -71,21 +70,23 @@ function initApp() {
     });
 }
 initApp();
+
 // function buyNow(key) {
 //     addToCard(key); 
 //     body.classList.remove('active');
 // }
 
-function addToCard(key) {
-    if (listCards[key] == null) {  // : This condition checks whether there is already an entry for the product with the specified key in the listCards array. If there is no entry (it is null or undefined), it means the product is not in the shopping cart.
-        listCards[key] = JSON.parse(JSON.stringify(products[key]));   // listCards[key] = JSON.parse(JSON.stringify(products[key]));: If the product is not in the shopping cart, this line creates a deep copy of the product from the products array using JSON.stringify and JSON.parse. This step ensures that modifications to the product in the shopping cart won't affect the original product in the products array.
-        listCards[key].quantity = 1; // : Sets the quantity of the added product to 1 since it's the first time the product is being added to the cart
+
+const addToCard = (key) => {
+    if (listCards[key] == null) {  
+        listCards[key] = JSON.parse(JSON.stringify(products[key]));   
+        listCards[key].quantity = 1; 
     }
-    saveCartToLocalStorage(); // Calls the saveCartToLocalStorage function to update the local storage with the modified listCards array, ensuring that the shopping cart state is stored persistently.
+    saveCartToLocalStorage(); 
     reloadCard();
 }
 
-function reloadCard(){
+const  reloadCard = () => {
     listCard.innerHTML = '';
     let count = 0;
     let totalPrice = 0;
@@ -110,7 +111,8 @@ function reloadCard(){
     total.innerText = totalPrice.toLocaleString();
     quantity.innerText = count;
 }
-function changeQuantity(key, quantity) {
+
+const changeQuantity = (key, quantity) => {
     if (quantity == 0) {
         delete listCards[key];
     } else {
@@ -122,7 +124,11 @@ function changeQuantity(key, quantity) {
 }
 
 
-function saveCartToLocalStorage() {
+const saveCartToLocalStorage = () => {
+    localStorage.setItem('cart', JSON.stringify(listCards));
+}
+
+const deleteItem = () => {
     localStorage.setItem('cart', JSON.stringify(listCards));
 }
 
@@ -131,3 +137,55 @@ window.addEventListener('load', () => {
     listCards = JSON.parse(localStorage.getItem('cart')) || [];
     reloadCard();
 });
+
+
+const linkInput = document.getElementById('linkInput');
+const priceInput = document.getElementById('priceInput');
+const nameInput = document.getElementById('nameInput');
+const addCardButton = document.getElementById('addCardButton');
+const displayArea = document.getElementById('displayArea');
+
+
+const cards = [];
+
+
+const addCard  = () => {
+    
+    const link = linkInput.value;
+    const price = parseFloat(priceInput.value);
+    const name = nameInput.value;
+
+    
+    const newCard = {
+        link: link,
+        price: price,
+        name: name
+    };
+    
+    cards.push(newCard);
+
+    displayCard(newCard);
+
+    linkInput.value = '';
+    priceInput.value = '';
+    nameInput.value = '';
+}
+
+const displayCard = (card) => {
+    const cardElement = document.createElement('div');
+    cardElement.innerHTML = `
+        <p><strong>Link:</strong> ${card.link}</p>
+        <p><strong>Price:</strong> $${card.price.toFixed(2)}</p>
+        <p><strong>Name:</strong> ${card.name}</p>
+        <hr>
+    `;
+
+    displayArea.appendChild(cardElement);
+}
+
+addCardButton.addEventListener('click', addCard);
+
+
+
+
+
