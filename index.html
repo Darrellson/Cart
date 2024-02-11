@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <link rel="stylesheet" href="page.css">
     <title>Document</title>
 </head>
 <body class="">
-
     <div class="container">
         <header>
             <h1>Your Shopping Cart</h1>
@@ -16,13 +16,20 @@
                 <span class="quantity">0</span>
             </div>
         </header>
-
-        <input type="text" id="linkInput" placeholder="Link">
-        <input type="number" id="priceInput" placeholder="Price">
-        <input type="text" id="nameInput" placeholder="Name">
-        <button id="addCardButton">Add Card</button>
-
-       <div id="displayArea"></div>
+        
+        <div class="plus-button" id="plusButton">
+            <span class="material-symbols-outlined">
+                add
+                </span>
+             <div class="plus-div" id="plusDiv">
+                <input type="text" id="linkInput" placeholder="Link">
+               <input type="number" id="priceInput" placeholder="Price">
+               <input type="text" id="nameInput" placeholder="Name">
+               <button id="addCardButton">Add Card</button>
+               <button id="addCancelButton">Cancel</button>
+             </div>
+    
+        </div>
 
         <div class="list"></div>
 

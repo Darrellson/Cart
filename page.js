@@ -5,6 +5,22 @@ const listCard = document.querySelector('.listCard');
 const body = document.querySelector('body');
 const total = document.querySelector('.total');
 const quantity = document.querySelector('.quantity');
+const plusButton = document.getElementById('plusButton');
+const plusDiv = document.getElementById('plusDiv');
+const addCancelButton = document.getElementById('addCancelButton'); 
+
+plusButton.addEventListener('click', () => {
+    if (plusDiv.style.display === 'none' || plusDiv.style.display === ''){
+        plusDiv.style.display = 'block'; 
+    } else {
+        plusDiv.style.display = 'none';
+    }
+});
+
+
+addCancelButton.addEventListener('click', () => {
+    plusDiv.style.display = 'none';
+});
 
 
 openShopping.addEventListener('click', ()=>{ 
@@ -148,28 +164,29 @@ const displayArea = document.getElementById('displayArea');
 
 const cards = [];
 
-
-const addCard  = () => {
-    
+const addCard = () => {
     const link = linkInput.value;
     const price = parseFloat(priceInput.value);
     const name = nameInput.value;
 
-    
     const newCard = {
+        id: products.length + 1,
         link: link,
         price: price,
         name: name
     };
-    
-    cards.push(newCard);
 
+    products.push(newCard);
+    initApp(); 
+
+    cards.push(newCard);
     displayCard(newCard);
 
     linkInput.value = '';
     priceInput.value = '';
     nameInput.value = '';
 }
+
 
 const displayCard = (card) => {
     const cardElement = document.createElement('div');
@@ -184,6 +201,8 @@ const displayCard = (card) => {
 }
 
 addCardButton.addEventListener('click', addCard);
+
+
 
 
 

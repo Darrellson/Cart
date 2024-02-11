@@ -129,3 +129,13 @@ header .shopping span{
 .listCard .count{
     margin: 0 10px;
 }
+.plus-button .plus-div {
+    display: block;
+    position: absolute;
+    width: 20%;
+    height: 150px;
+    padding: 20px;
+    border-radius: 20px;
+    transition: 0.5s;
+    background-color: #858278;
+}
