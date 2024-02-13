@@ -68,11 +68,11 @@ header .shopping span{
     left: 100%;
     width: 500px;
     background-color: #453E3B;
-    height: 100vh;
+    height: 80vh;
     transition: 0.5s;
 }
 .active .card{
-    left: calc(100% - 500px);
+    left: calc(155% - 500px);
 }
 .active .container{
    transform: translateX(-200px);
@@ -130,7 +130,6 @@ header .shopping span{
     margin: 0 10px;
 }
 .plus-button .plus-div {
-    display: block;
     position: absolute;
     width: 20%;
     height: 150px;
@@ -138,4 +137,7 @@ header .shopping span{
     border-radius: 20px;
     transition: 0.5s;
     background-color: #858278;
+}
+.none {
+    display: none;
 }

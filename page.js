@@ -6,34 +6,38 @@ const body = document.querySelector('body');
 const total = document.querySelector('.total');
 const quantity = document.querySelector('.quantity');
 const plusButton = document.getElementById('plusButton');
+const closeButton =document.getElementById('closeButton')
 const plusDiv = document.getElementById('plusDiv');
-const addCancelButton = document.getElementById('addCancelButton'); 
+const addCancelButton = document.getElementById('addCancelButton');
+const linkInput = document.getElementById('linkInput');
+const priceInput = document.getElementById('priceInput');
+const nameInput = document.getElementById('nameInput');
+const addCardButton = document.getElementById('addCardButton');
+const displayArea = document.getElementById('displayArea');
 
 plusButton.addEventListener('click', () => {
-    if (plusDiv.style.display === 'none' || plusDiv.style.display === ''){
-        plusDiv.style.display = 'block'; 
-    } else {
-        plusDiv.style.display = 'none';
-    }
+    plusDiv.classList.toggle('none');
 });
-
 
 addCancelButton.addEventListener('click', () => {
-    plusDiv.style.display = 'none';
+    plusDiv.classList.toggle('none');
 });
 
+closeButton.addEventListener('click', () => {
+    plusDiv.classList.toggle('none');
+});
 
-openShopping.addEventListener('click', ()=>{ 
+openShopping.addEventListener('click', () => {
     body.classList.toggle('active');
-})
+});
 
-closeShopping.addEventListener('click', ()=>{
+closeShopping.addEventListener('click', () => {
     body.classList.remove('active');
-})
+});
 
-const products = [                
+let products = [
     {
-        id: 1,                           
+        id: 1,
         name: 'PRODUCT NAME 1',
         image: '1.PNG',
         price: 25
@@ -70,8 +74,9 @@ const products = [
     }
 ];
 
-const listCards = JSON.parse(localStorage.getItem('cart')) || [];  
-
+let listCards = localStorage.getItem('cart') ? Object.assign([], JSON.parse(localStorage.getItem('cart'))) : [];
+let cards = [];
+// initialize cards 
 const initApp = () => {
     products.forEach((value, key) => {
         const newDiv = document.createElement('div');
@@ -86,30 +91,24 @@ const initApp = () => {
     });
 }
 initApp();
-
-// function buyNow(key) {
-//     addToCard(key); 
-//     body.classList.remove('active');
-// }
-
-
+//adds iteam to card
 const addToCard = (key) => {
-    if (listCards[key] == null) {  
-        listCards[key] = JSON.parse(JSON.stringify(products[key]));   
-        listCards[key].quantity = 1; 
+    if (listCards[key] == null) {
+        listCards[key] = Object.assign({}, products[key]);
+        listCards[key].quantity = 1;
     }
-    saveCartToLocalStorage(); 
-    reloadCard();
+    saveCartToLocalStorage();
+    cardToCart();
 }
-
-const  reloadCard = () => {
+// adding iteam in cart
+const cardToCart = () => {   
     listCard.innerHTML = '';
     let count = 0;
     let totalPrice = 0;
-    listCards.forEach((value, key)=>{
+    listCards.forEach((value, key) => {
         totalPrice = totalPrice + value.price;
         count = count + value.quantity;
-        if(value != null){
+        if (value != null) {
             let newDiv = document.createElement('li');
             newDiv.innerHTML = `
             <div><img src="image/${value.image}"/></div>
@@ -120,74 +119,55 @@ const  reloadCard = () => {
                 <div class="count">${value.quantity}</div>
                 <button onclick="changeQuantity(${key}, ${value.quantity + 1})">+</button>
             </div>
-            <button onclick="buyNow(${key})">Buy Now</button>`; 
-                listCard.appendChild(newDiv);
+            <button onclick="buyNow(${key})">Buy Now</button>`;
+            listCard.appendChild(newDiv);
         }
     })
     total.innerText = totalPrice.toLocaleString();
     quantity.innerText = count;
 }
-
+// shows how many iteams are in cart
 const changeQuantity = (key, quantity) => {
-    if (quantity == 0) {
+    if (quantity <= 0) {
         delete listCards[key];
     } else {
         listCards[key].quantity = quantity;
         listCards[key].price = quantity * products[key].price;
     }
-    saveCartToLocalStorage(); 
-    reloadCard();
+    saveCartToLocalStorage();
+    cardToCart();
 }
-
 
 const saveCartToLocalStorage = () => {
     localStorage.setItem('cart', JSON.stringify(listCards));
 }
 
-const deleteItem = () => {
-    localStorage.setItem('cart', JSON.stringify(listCards));
-}
-
-
 window.addEventListener('load', () => {
-    listCards = JSON.parse(localStorage.getItem('cart')) || [];
-    reloadCard();
+    listCards = localStorage.getItem('cart') ? Object.assign([], JSON.parse(localStorage.getItem('cart'))) : [];
+    cardToCart();
 });
-
-
-const linkInput = document.getElementById('linkInput');
-const priceInput = document.getElementById('priceInput');
-const nameInput = document.getElementById('nameInput');
-const addCardButton = document.getElementById('addCardButton');
-const displayArea = document.getElementById('displayArea');
-
-
-const cards = [];
-
+// adds new card 
 const addCard = () => {
     const link = linkInput.value;
     const price = parseFloat(priceInput.value);
     const name = nameInput.value;
 
-    const newCard = {
+    let newCard = {
         id: products.length + 1,
         link: link,
         price: price,
         name: name
     };
 
-    products.push(newCard);
-    initApp(); 
-
-    cards.push(newCard);
+    products = [...products, newCard];
+    initApp();
     displayCard(newCard);
 
     linkInput.value = '';
     priceInput.value = '';
     nameInput.value = '';
 }
-
-
+// displays added new iteam
 const displayCard = (card) => {
     const cardElement = document.createElement('div');
     cardElement.innerHTML = `
@@ -201,10 +181,3 @@ const displayCard = (card) => {
 }
 
 addCardButton.addEventListener('click', addCard);
-
-
-
-
-
-
-
