@@ -81,9 +81,11 @@ let products = [
     }
 ];
 
-let listCards = localStorage.getItem('cart') ? Object.assign([], JSON.parse(localStorage.getItem('cart'))) : [];
 let cards = [];
-// initialize cards 
+// Define an array to store the cart items
+let cartItems = [];
+
+// Initialize the application
 const initApp = () => {
     products.forEach((value, key) => {
         const newDiv = document.createElement('div');
@@ -92,68 +94,83 @@ const initApp = () => {
             <img src="image/${value.image}">
             <div class="title">${value.name}</div>
             <div class="price">${value.price.toLocaleString()}</div>
-            <button onclick="addToCard(${key})">Add To Cart</button>
+            <button onclick="addToCart(${key})">Add To Cart</button>
             <button onclick="buyNow(${key})">Buy Now</button>`;
         list.appendChild(newDiv);
     });
 }
-initApp();
-//adds iteam to card
-const addToCard = (key) => {
-    if (listCards[key] == null) {
-        listCards[key] = Object.assign({}, products[key]);
-        listCards[key].quantity = 1;
-    }
-    saveCartToLocalStorage();
-    cardToCart();
-}
-// adding iteam in cart
-const cardToCart = () => {   
-    listCard.innerHTML = '';
-    let count = 0;
-    let totalPrice = 0;
-    listCards.forEach((value, key) => {
-        totalPrice = totalPrice + value.price;
-        count = count + value.quantity;
-        if (value != null) {
-            let newDiv = document.createElement('li');
-            newDiv.innerHTML = `
-            <div><img src="image/${value.image}"/></div>
-            <div>${value.name}</div>
-            <div>${value.price.toLocaleString()}</div>
-            <div>
-                <button onclick="changeQuantity(${key}, ${value.quantity - 1})">-</button>
-                <div class="count">${value.quantity}</div>
-                <button onclick="changeQuantity(${key}, ${value.quantity + 1})">+</button>
-            </div>
-            <button onclick="buyNow(${key})">Buy Now</button>`;
-            listCard.appendChild(newDiv);
-        }
-    })
-    total.innerText = totalPrice.toLocaleString();
-    quantity.innerText = count;
-}
-// shows how many iteams are in cart
-const changeQuantity = (key, quantity) => {
-    if (quantity <= 0) {
-        delete listCards[key];
+
+// Function to add item to cart
+const addToCart = (key) => {
+    const product = products[key];
+    const index = cartItems.findIndex(item => item.id === product.id);
+
+    if (index !== -1) {
+        // If item already exists in cart, increase its quantity
+        cartItems[index].quantity++;
     } else {
-        listCards[key].quantity = quantity;
-        listCards[key].price = quantity * products[key].price;
+        // If item doesn't exist in cart, add it
+        cartItems.push({
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            quantity: 1
+        });
     }
-    saveCartToLocalStorage();
-    cardToCart();
+
+    // Update cart display
+    updateCartDisplay();
 }
 
-const saveCartToLocalStorage = () => {
-    localStorage.setItem('cart', JSON.stringify(listCards));
+// Function to update cart display
+const updateCartDisplay = () => {
+    listCard.innerHTML = '';
+    let totalPrice = 0;
+    let totalCount = 0;
+
+    cartItems.forEach((item, index) => {
+        const { id, name, price, quantity } = item;
+        totalPrice += price * quantity;
+        totalCount += quantity;
+
+        const newDiv = document.createElement('li');
+        newDiv.innerHTML = `
+            <div><img src="image/${products[id - 1].image}"/></div>
+            <div>${name}</div>
+            <div>${(price * quantity).toLocaleString()}</div>
+            <div>
+                <button onclick="changeQuantity(${index}, ${quantity - 1})">-</button>
+                <div class="count">${quantity}</div>
+                <button onclick="changeQuantity(${index}, ${quantity + 1})">+</button>
+            </div>
+            <button onclick="buyNow(${index})">Buy Now</button>`;
+        listCard.appendChild(newDiv);
+    });
+
+    total.innerText = totalPrice.toLocaleString();
+    quantity.innerText = totalCount;
 }
 
+// Function to change item quantity in cart
+const changeQuantity = (index, newQuantity) => {
+    if (newQuantity <= 0) {
+        // If quantity becomes zero, remove the item from cart
+        cartItems.splice(index, 1);
+    } else {
+        // Update the quantity of the item
+        cartItems[index].quantity = newQuantity;
+    }
+
+    // Update cart display
+    updateCartDisplay();
+}
+
+// Initialize the application when the window loads
 window.addEventListener('load', () => {
-    listCards = localStorage.getItem('cart') ? Object.assign([], JSON.parse(localStorage.getItem('cart'))) : [];
-    cardToCart();
+    initApp();
+    updateCartDisplay();
 });
-// adds new card 
+// adding new card
 const addCard = () => {
     const link = linkInput.value;
     const price = parseFloat(priceInput.value);
