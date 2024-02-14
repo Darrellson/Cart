@@ -18,6 +18,7 @@ header .shopping{
 }
 header .shopping img{
     width: 40px;
+    cursor: pointer;
 }
 header .shopping span{
     background: red;
@@ -37,6 +38,8 @@ header .shopping span{
     column-gap: 20px;
     row-gap: 20px;
     margin-top: 50px;
+    overflow-y: auto; 
+    max-height: 733px;
 }
 .list .item{
     text-align: center;
@@ -132,11 +135,37 @@ header .shopping span{
 .plus-button .plus-div {
     position: absolute;
     width: 20%;
-    height: 150px;
+    height: 250px;
     padding: 20px;
     border-radius: 20px;
     transition: 0.5s;
-    background-color: #858278;
+    background-color: #fafafa;
+}
+.plus-button .material-symbols-outlined {
+    cursor: pointer;
+}
+.debitcard .addDebit {
+    position: absolute;
+     top: 30%;
+    left: 25%;
+    width: 50%;
+    height: 500px;
+    background-color: #fafafa;
+    border-radius: 20px;
+    padding: 20px;
+}
+.debitcard input {
+   width: 100%;
+   height: 10%;
+}
+.debitcard button {
+    justify-content: center;
+    align-items: center;
+   margin: 10px;
+   width: 20%;
+}
+.addDebit .material-symbols-outlined {
+    cursor: pointer;
 }
 .none {
     display: none;

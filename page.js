@@ -14,30 +14,39 @@ const priceInput = document.getElementById('priceInput');
 const nameInput = document.getElementById('nameInput');
 const addCardButton = document.getElementById('addCardButton');
 const displayArea = document.getElementById('displayArea');
+const debitCardDetails = document.getElementById('debitCardDetails');
+const addDebit = document.getElementById('addDebit');
+const cardCloseButton = document.getElementById('cardCloseButton');
+const DebitCancelButton = document.getElementById('DebitCancelButton');
+const addDebitButton = document.getElementById('saveDebitCard');
 
 // Check if the clicked element is not inside plusDiv and is not the plusButton
-body.addEventListener('click', (event) => {
-    if (!plusDiv.contains(event.target) && event.target !== plusButton) {
-        plusDiv.classList.add('none');
-    }
+body.addEventListener('click', (event) => !plusDiv.contains(event.target) && event.target !== plusButton ? plusDiv.classList.add('none') : null);
+// close addCard Box
+cardCloseButton.addEventListener('click', () => {
+    debitCardDetails.classList.toggle('none');
 });
-
+// make cancele clickable
+DebitCancelButton.addEventListener('click', () =>{
+    debitCardDetails.classList.toggle('none');
+});
+// making plus clickable
 plusButton.addEventListener('click', () => {
     plusDiv.classList.toggle('none');
 });
-
+// make cancele clickable
 addCancelButton.addEventListener('click', () => {
     plusDiv.classList.toggle('none');
 });
-
+// make cross clickable
 closeButton.addEventListener('click', () => {
     plusDiv.classList.toggle('none');
 });
-
+// opens cart 
 openShopping.addEventListener('click', () => {
     body.classList.toggle('active');
 });
-
+// closes cart
 closeShopping.addEventListener('click', () => {
     body.classList.remove('active');
 });
@@ -81,12 +90,19 @@ let products = [
     }
 ];
 
-let cards = [];
 // Define an array to store the cart items
 let cartItems = [];
 
+const buyNow = (key) => {
+    const product = products[key];
+    console.log("Buying Product:", product);
+    // Display debit card details input fields
+    document.getElementById('debitCardDetails').classList.remove('none');
+}
+
 // Initialize the application
 const initApp = () => {
+    list.innerHTML="";
     products.forEach((value, key) => {
         const newDiv = document.createElement('div');
         newDiv.classList.add('item');
@@ -99,29 +115,24 @@ const initApp = () => {
         list.appendChild(newDiv);
     });
 }
+// Initialize the application when the window loads
+window.addEventListener('load', () => {
+    // Retrieve products from local storage if available, otherwise initialize with default products
+    products = (localStorage.getItem('products') ? JSON.parse(localStorage.getItem('products')) : [...products]);
 
+    // Initialize the application
+    initApp();
+    updateCartDisplay();
+});
 // Function to add item to cart
 const addToCart = (key) => {
     const product = products[key];
     const index = cartItems.findIndex(item => item.id === product.id);
 
-    if (index !== -1) {
-        // If item already exists in cart, increase its quantity
-        cartItems[index].quantity++;
-    } else {
-        // If item doesn't exist in cart, add it
-        cartItems.push({
-            id: product.id,
-            name: product.name,
-            price: product.price,
-            quantity: 1
-        });
-    }
-
+    index !== -1 ? cartItems = [...cartItems.slice(0, index), {...cartItems[index], quantity: cartItems[index].quantity + 1}, ...cartItems.slice(index + 1)] : cartItems = [...cartItems, {...product, quantity: 1}];
     // Update cart display
     updateCartDisplay();
 }
-
 // Function to update cart display
 const updateCartDisplay = () => {
     listCard.innerHTML = '';
@@ -149,32 +160,22 @@ const updateCartDisplay = () => {
 
     total.innerText = totalPrice.toLocaleString();
     quantity.innerText = totalCount;
+    localStorage.setItem('cartItems', JSON.stringify(cartItems));
 }
-
 // Function to change item quantity in cart
 const changeQuantity = (index, newQuantity) => {
-    if (newQuantity <= 0) {
-        // If quantity becomes zero, remove the item from cart
-        cartItems.splice(index, 1);
-    } else {
-        // Update the quantity of the item
-        cartItems[index].quantity = newQuantity;
-    }
+    newQuantity <= 0 ? cartItems.splice(index, 1) : cartItems[index].quantity = newQuantity;
 
     // Update cart display
     updateCartDisplay();
 }
-
-// Initialize the application when the window loads
-window.addEventListener('load', () => {
-    initApp();
-    updateCartDisplay();
-});
 // adding new card
 const addCard = () => {
-    const link = linkInput.value;
+    const link = linkInput.value.trim();
     const price = parseFloat(priceInput.value);
-    const name = nameInput.value;
+    const name = nameInput.value.trim();
+
+    if (!link || !price || isNaN(price) || !name) return alert("Please fill in all fields.");
 
     let newCard = {
         id: products.length + 1,
@@ -187,9 +188,12 @@ const addCard = () => {
     initApp();
     displayCard(newCard);
 
+    // Clear input fields
     linkInput.value = '';
     priceInput.value = '';
     nameInput.value = '';
+
+    localStorage.setItem('products', JSON.stringify(products));
 }
 // displays added new iteam
 const displayCard = (card) => {
