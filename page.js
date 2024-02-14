@@ -15,6 +15,13 @@ const nameInput = document.getElementById('nameInput');
 const addCardButton = document.getElementById('addCardButton');
 const displayArea = document.getElementById('displayArea');
 
+// Check if the clicked element is not inside plusDiv and is not the plusButton
+body.addEventListener('click', (event) => {
+    if (!plusDiv.contains(event.target) && event.target !== plusButton) {
+        plusDiv.classList.add('none');
+    }
+});
+
 plusButton.addEventListener('click', () => {
     plusDiv.classList.toggle('none');
 });
