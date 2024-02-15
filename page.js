@@ -230,6 +230,12 @@ const addCard = () => {
 
     if (!link || !price || isNaN(price) || !name) return alert("Please fill in all fields.");
 
+    // Check if a card with the same name already exists
+    const existingCard = products.find(card => card.name === name);
+    if (existingCard) {
+        return alert("A card with the same name already exists.");
+    }
+
     let newCard = {
         id: products.length + 1,
         link: link,
@@ -251,6 +257,7 @@ const addCard = () => {
     priceInput.value = '';
     nameInput.value = '';
 }
+
 // displays added new iteam
 const displayCard = (card) => {
     const cardElement = document.createElement('div');
