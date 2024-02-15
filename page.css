@@ -167,6 +167,35 @@ header .shopping span{
 .addDebit .material-symbols-outlined {
     cursor: pointer;
 }
+/* Style for the card display area */
+#displayArea {
+    margin-top: 20px;
+}
+/* Style for each card */
+.card {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.card p {
+    margin: 5px 0;
+}
+
+.card button {
+    background-color: #ff0000;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.card button:hover {
+    background-color: #cc0000;
+}
+
 .none {
     display: none;
 }

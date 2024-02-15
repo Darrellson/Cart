@@ -92,13 +92,65 @@ let products = [
 
 // Define an array to store the cart items
 let cartItems = [];
-
+// buy now function
 const buyNow = (key) => {
     const product = products[key];
     console.log("Buying Product:", product);
     // Display debit card details input fields
     document.getElementById('debitCardDetails').classList.remove('none');
 }
+const saveDebitCard = () => {
+    const debitCardNumber = document.getElementById('debitCardNumber').value.trim();
+    const debitCardCVV = document.getElementById('debitCardCVV').value.trim();
+    const debitCardLastName = document.getElementById('debitCardLastName').value.trim();
+    const debitCardFirstName = document.getElementById('debitCardFirstName').value.trim();
+
+    if (!debitCardNumber || !debitCardCVV || !debitCardLastName || !debitCardFirstName) {
+        return alert("Please fill in all fields.");
+    }
+
+    const debitCardInfo = {
+        cardNumber: debitCardNumber,
+        cvv: debitCardCVV,
+        lastName: debitCardLastName,
+        firstName: debitCardFirstName
+    };
+
+    console.log("Debit Card Information:", debitCardInfo);
+
+    // You can add further processing or actions here
+
+    // Clear input fields after saving
+    document.getElementById('debitCardNumber').value = '';
+    document.getElementById('debitCardCVV').value = '';
+    document.getElementById('debitCardLastName').value = '';
+    document.getElementById('debitCardFirstName').value = '';
+
+    // Hide the debit card details form after saving
+    debitCardDetails.classList.add('none');
+}
+
+// Add event listener to the "Save" button to trigger the saveDebitCard function
+addDebitButton.addEventListener('click', saveDebitCard);
+// Add event listener to the CVV input field
+const debitCardCVVInput = document.getElementById('debitCardCVV');
+debitCardCVVInput.addEventListener('input', () => {
+    const cvvValue = debitCardCVVInput.value.trim();
+    if (/[a-zA-Z]/.test(cvvValue)) {
+        alert("CVV should only contain numbers.");
+        // Clear the input field or take any other necessary action
+    }
+});
+
+// Add event listener to the Debit Card Number input field
+const debitCardNumberInput = document.getElementById('debitCardNumber');
+debitCardNumberInput.addEventListener('input', () => {
+    const cardNumberValue = debitCardNumberInput.value.trim();
+    if (/[a-zA-Z]/.test(cardNumberValue)) {
+        alert("Debit Card Number should only contain numbers.");
+        // Clear the input field or take any other necessary action
+    }
+});
 
 // Initialize the application
 const initApp = () => {
@@ -169,7 +221,8 @@ const changeQuantity = (index, newQuantity) => {
     // Update cart display
     updateCartDisplay();
 }
-// adding new card
+
+// Function to add a new card to the products array and save it to local storage
 const addCard = () => {
     const link = linkInput.value.trim();
     const price = parseFloat(priceInput.value);
@@ -184,16 +237,19 @@ const addCard = () => {
         name: name
     };
 
+    // Add the new card to the products array
     products = [...products, newCard];
-    initApp();
+
+    // Save the updated products array to local storage
+    localStorage.setItem('products', JSON.stringify(products));
+
+    // Update the display to show the new card
     displayCard(newCard);
 
     // Clear input fields
     linkInput.value = '';
     priceInput.value = '';
     nameInput.value = '';
-
-    localStorage.setItem('products', JSON.stringify(products));
 }
 // displays added new iteam
 const displayCard = (card) => {
@@ -208,4 +264,7 @@ const displayCard = (card) => {
     displayArea.appendChild(cardElement);
 }
 
-addCardButton.addEventListener('click', addCard);
+if (!addCardButton.onclick) {
+    addCardButton.addEventListener('click', addCard);
+}
+
