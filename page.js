@@ -136,7 +136,7 @@ addDebitButton.addEventListener('click', saveDebitCard);
 const debitCardCVVInput = document.getElementById('debitCardCVV');
 debitCardCVVInput.addEventListener('input', () => {
     const cvvValue = debitCardCVVInput.value.trim();
-    if (/[a-zA-Z]/.test(cvvValue)) {
+    if (/[a-zA-Z]/.test(cvvValue)) { // In JavaScript, /[a-zA-Z]/ is a regular expression pattern that matches any single character within the range of lowercase letters (a-z) and uppercase letters (A-Z).
         alert("CVV should only contain numbers.");
         // Clear the input field or take any other necessary action
     }
@@ -146,7 +146,7 @@ debitCardCVVInput.addEventListener('input', () => {
 const debitCardNumberInput = document.getElementById('debitCardNumber');
 debitCardNumberInput.addEventListener('input', () => {
     const cardNumberValue = debitCardNumberInput.value.trim();
-    if (/[a-zA-Z]/.test(cardNumberValue)) {
+    if (/[a-zA-Z]/.test(cardNumberValue)) { // This is a character class that matches any single character that is a letter from a to z (lowercase) or A to Z (uppercase).
         alert("Debit Card Number should only contain numbers.");
         // Clear the input field or take any other necessary action
     }
@@ -248,6 +248,7 @@ const addCard = () => {
 
     // Save the updated products array to local storage
     localStorage.setItem('products', JSON.stringify(products));
+    initApp();
 
     // Update the display to show the new card
     displayCard(newCard);
@@ -256,6 +257,13 @@ const addCard = () => {
     linkInput.value = '';
     priceInput.value = '';
     nameInput.value = '';
+
+    hidePlusDiv();
+}
+
+// Function to hide the plusDiv
+const hidePlusDiv = () => {
+    plusDiv.classList.add('none');
 }
 
 // displays added new iteam
@@ -270,8 +278,7 @@ const displayCard = (card) => {
 
     displayArea.appendChild(cardElement);
 }
-
+// Add event listener to the "Add Card" button only if it's not already attached
 if (!addCardButton.onclick) {
     addCardButton.addEventListener('click', addCard);
 }
-
