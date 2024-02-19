@@ -65,6 +65,9 @@ header .shopping span{
     width: 100%;
     padding: 10px;
 }
+.list .item .removeCardButton {
+    background-color: red;
+}
 .card{
     position: fixed;
     top:0;
@@ -195,7 +198,6 @@ header .shopping span{
 .card button:hover {
     background-color: #cc0000;
 }
-
 .none {
     display: none;
 }

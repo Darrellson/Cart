@@ -22,74 +22,58 @@ const addDebitButton = document.getElementById('saveDebitCard');
 
 // Check if the clicked element is not inside plusDiv and is not the plusButton
 body.addEventListener('click', (event) => !plusDiv.contains(event.target) && event.target !== plusButton ? plusDiv.classList.add('none') : null);
-// close addCard Box
-cardCloseButton.addEventListener('click', () => {
-    debitCardDetails.classList.toggle('none');
+// make cancel close clickable
+[cardCloseButton, DebitCancelButton].forEach(button => {
+    button.addEventListener('click', () => {
+        debitCardDetails.classList.toggle('none');
+    });
 });
-// make cancele clickable
-DebitCancelButton.addEventListener('click', () =>{
-    debitCardDetails.classList.toggle('none');
+// make cross cancele plus clickable 
+[plusButton, addCancelButton, closeButton].forEach(button => {
+    button.addEventListener('click', () => {
+        plusDiv.classList.toggle('none');
+    });
 });
-// making plus clickable
-plusButton.addEventListener('click', () => {
-    plusDiv.classList.toggle('none');
+// opens and close cart
+[openShopping, closeShopping].forEach(button => {
+    button.addEventListener('click', () => {
+        body.classList.toggle('active');
+    });
 });
-// make cancele clickable
-addCancelButton.addEventListener('click', () => {
-    plusDiv.classList.toggle('none');
-});
-// make cross clickable
-closeButton.addEventListener('click', () => {
-    plusDiv.classList.toggle('none');
-});
-// opens cart 
-openShopping.addEventListener('click', () => {
-    body.classList.toggle('active');
-});
-// closes cart
-closeShopping.addEventListener('click', () => {
-    body.classList.remove('active');
-});
-
-let products = [
-    {
-        id: 1,
-        name: 'PRODUCT NAME 1',
-        image: '1.PNG',
-        price: 25
-    },
-    {
-        id: 2,
-        name: 'PRODUCT NAME 2',
-        image: '2.PNG',
-        price: 27
-    },
-    {
-        id: 3,
-        name: 'PRODUCT NAME 3',
-        image: '3.PNG',
-        price: 29
-    },
-    {
-        id: 4,
-        name: 'PRODUCT NAME 4',
-        image: '4.PNG',
-        price: 30
-    },
-    {
-        id: 5,
-        name: 'PRODUCT NAME 5',
-        image: '5.PNG',
-        price: 32
-    },
-    {
-        id: 6,
-        name: 'PRODUCT NAME 6',
-        image: '6.PNG',
-        price: 33
+// Function to fetch products array from JSON file
+const fetchProducts = async () => { // // Define an asynchronous function to fetch products from 'products.json'
+    try {
+       // Use await to asynchronously fetch data from 'products.json'
+      const response = await fetch('products.json');
+       // Check if the response is not okay (status code other than 200)
+      if (!response.ok) {
+          // Throw an error if the response is not okay
+        throw new Error('Network response was not ok');
+      }
+        // Use await to parse the JSON data from the response asynchronously
+      const data = await response.json();
+       // Return the parsed data
+      return data;
+    } catch (error) {
+      // If any error occurs during the fetch process, catch it and throw a new error
+      throw new Error('There was a problem fetching the products: ' + error);
     }
-];
-
+  }
+  // Function to handle fetching products and updating UI
+  const initializeApp = async () => {
+    try {
+      // Call the fetchProducts function to asynchronously fetch the products
+      const data = await fetchProducts();
+      // Update the products array with the fetched data
+      products = data;
+      // Initialize the application with the updated products
+      initApp();
+      updateCartDisplay();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  initializeApp();
 // Define an array to store the cart items
 let cartItems = [];
 // buy now function
@@ -136,7 +120,7 @@ addDebitButton.addEventListener('click', saveDebitCard);
 const debitCardCVVInput = document.getElementById('debitCardCVV');
 debitCardCVVInput.addEventListener('input', () => {
     const cvvValue = debitCardCVVInput.value.trim();
-    if (/[a-zA-Z]/.test(cvvValue)) { // In JavaScript, /[a-zA-Z]/ is a regular expression pattern that matches any single character within the range of lowercase letters (a-z) and uppercase letters (A-Z).
+    if (/[a-zA-Z]/.test(cvvValue)) {
         alert("CVV should only contain numbers.");
         // Clear the input field or take any other necessary action
     }
@@ -146,15 +130,14 @@ debitCardCVVInput.addEventListener('input', () => {
 const debitCardNumberInput = document.getElementById('debitCardNumber');
 debitCardNumberInput.addEventListener('input', () => {
     const cardNumberValue = debitCardNumberInput.value.trim();
-    if (/[a-zA-Z]/.test(cardNumberValue)) { // This is a character class that matches any single character that is a letter from a to z (lowercase) or A to Z (uppercase).
+    if (/[a-zA-Z]/.test(cardNumberValue)) {
         alert("Debit Card Number should only contain numbers.");
         // Clear the input field or take any other necessary action
     }
 });
-
-// Initialize the application
+// Function to initialize the application
 const initApp = () => {
-    list.innerHTML="";
+    list.innerHTML = "";
     products.forEach((value, key) => {
         const newDiv = document.createElement('div');
         newDiv.classList.add('item');
@@ -163,10 +146,22 @@ const initApp = () => {
             <div class="title">${value.name}</div>
             <div class="price">${value.price.toLocaleString()}</div>
             <button onclick="addToCart(${key})">Add To Cart</button>
-            <button onclick="buyNow(${key})">Buy Now</button>`;
+            <button onclick="buyNow(${key})">Buy Now</button>
+            <button class="removeCardButton" onclick="removeCard(${key})">Remove</button>`; // Added onclick event for remove button
         list.appendChild(newDiv);
     });
 }
+
+// Function to remove card from display and local storage
+const removeCard = (key) => {
+    // Remove the card from the products array
+    products.splice(key, 1);
+
+    // Update the display and local storage
+    initApp();
+    localStorage.setItem('products', JSON.stringify(products));
+}
+
 // Initialize the application when the window loads
 window.addEventListener('load', () => {
     // Retrieve products from local storage if available, otherwise initialize with default products
@@ -257,22 +252,16 @@ const addCard = () => {
     linkInput.value = '';
     priceInput.value = '';
     nameInput.value = '';
-
-    hidePlusDiv();
 }
 
-// Function to hide the plusDiv
-const hidePlusDiv = () => {
-    plusDiv.classList.add('none');
-}
-
-// displays added new iteam
+// Modify the displayCard function to include a close button for each card
 const displayCard = (card) => {
     const cardElement = document.createElement('div');
+    cardElement.setAttribute('data-card-name', card.name); // Set data-card-name attribute
     cardElement.innerHTML = `
         <p><strong>Link:</strong> ${card.link}</p>
         <p><strong>Price:</strong> $${card.price.toFixed(2)}</p>
-        <p><strong>Name:</strong> ${card.name}</p>
+        <p><strong>Name:</strong> ${card.name}</p> 
         <hr>
     `;
 
@@ -282,3 +271,4 @@ const displayCard = (card) => {
 if (!addCardButton.onclick) {
     addCardButton.addEventListener('click', addCard);
 }
+
